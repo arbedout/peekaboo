@@ -14,7 +14,7 @@ build:
 	docker build -t ${NAME}:${RELEASE} .
 	docker tag -f ${NAME}:${RELEASE} ${NAME}:latest
 
-run: clean
+run: clean build
 	docker run -d -p ${INT_PORT}:${EXT_PORT} --name=${NAME} ${NAME}:latest
 
 stop:

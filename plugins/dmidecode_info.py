@@ -1,60 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from subprocess import Popen, PIPE
+from os.path import isfile
+from subprocess import CalledProcessError, check_output
+
+def _get_dmi_info(name, fname):
+    val = ''
+    try:
+        val = check_output(['sudo', 'dmidecode', '-s', 'system-serial-number'])
+    except CalledProcessError as e:
+        if isfile(fname):
+            f = open(fname, 'r')
+            val = f.readline()
+            f.close
+    return val.strip()
 
 def dmidecode_info():
     data = {}
-
-    # Serial number
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'system-serial-number'], stdout=PIPE).communicate()[0]
-        data['serial_number'] = output.strip()
-    except:
-        pass
-
-    # Manufacturer
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'system-manufacturer'], stdout=PIPE).communicate()[0]
-        data['manufacturer'] = output.strip()
-    except:
-        pass
-
-    # Version
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'system-version'], stdout=PIPE).communicate()[0]
-        data['product_version'] = output.strip()
-    except:
-        pass
-
-    # Product name
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'system-product-name'], stdout=PIPE).communicate()[0]
-        data['product'] = output.strip()
-    except:
-        pass
-
-    # BIOS release date
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'bios-release-date'], stdout=PIPE).communicate()[0]
-        data['bios_rel_date'] = output.strip()
-    except:
-        pass
-
-    # BIOS vendor
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'bios-vendor'], stdout=PIPE).communicate()[0]
-        data['bios_vendor'] = output.strip()
-    except:
-        pass
-
-    # BIOS version
-    try:
-        output = Popen(['sudo', 'dmidecode', '-s', 'bios-version'], stdout=PIPE).communicate()[0]
-        data['bios_version'] = output.strip()
-    except:
-        pass
-
+    data['serial_number'] = _get_dmi_info('system-serial-number', '/sys/devices/virtual/dmi/id/product_serial')
+    data['manufacturer'] = _get_dmi_info('system-manufacturer', '/sys/devices/virtual/dmi/id/chassis_vendor')
+    data['product_version'] = _get_dmi_info('product_version', '/sys/devices/virtual/dmi/id/product_version')
+    data['product'] = _get_dmi_info('system-product-name', '/sys/devices/virtual/dmi/id/product_name')
+    data['bios_date'] = _get_dmi_info('bios-release-date', '/sys/devices/virtual/dmi/id/bios_date')
+    data['bios_vendor'] = _get_dmi_info('bios-vendor', '/sys/devices/virtual/dmi/id/bios_vendor')
+    data['bios_version'] = _get_dmi_info('bios-version', '/sys/devices/virtual/dmi/id/bios_version')
     return data
 
 if __name__ == "__main__":
