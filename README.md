@@ -24,9 +24,22 @@ cd peekaboo
 
 For can quickly run it inside a Docker container:
 
+## Buid docker image
+
 ```bash
 docker build .
-docker run -p 5000:5000 <image id>
+```
+
+## Run docker image
+
+```bash
+docker run -d -p 5000:5000 --rm=true --name=peekaboo <image id>
+```
+
+## Stop container:
+
+```bash
+docker stop peekaboo
 ```
 
 # Query
@@ -34,11 +47,11 @@ docker run -p 5000:5000 <image id>
 Query using YAML:
 
 ```bash
-curl -i http://<host>:5000/config
+curl -i http://<host>:5000/info
 ```
 
 Query using JSON:
 
 ```bash
-curl -i -H "Accept: application/json" http://<host>:5000/config
+curl -i -H "Accept: application/json" http://<host>:5000/info
 ```
