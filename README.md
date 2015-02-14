@@ -7,14 +7,15 @@ Peekabo expose hardware info through HTTP.
 In order to run peekaboo you need to satisfy the following dependecies:
 
 ```bash
-dzdo groupadd dmidecode
-dzdo usermod <user> -G dmidecode
-dzdo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
+sudo groupadd dmidecode
+sudo usermod <user> -G dmidecode
+sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
 %dmidecode ALL=(ALL) NOPASSWD:/usr/sbin/dmidecode
 EOF
-dzdo yum install -y libselinux-utils redhat-lsb python-pip
-dzdo pip install requirements.txt
-git clone git@gitlab:michael.persson/peekaboo.git
+sudo yum install -y epel-release
+sudo yum install -y libselinux-utils redhat-lsb python-devel python-pip
+sudo pip install -r requirements.txt
+git clone https://github.com/mickep76/peekaboo.git
 cd peekaboo
 ./peekaboo.py
 ```
