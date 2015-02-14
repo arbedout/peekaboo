@@ -27,13 +27,13 @@ For can quickly run it inside a Docker container:
 ## Buid docker image
 
 ```bash
-docker build .
+docker build -t peekaboo:latest .
 ```
 
 ## Run docker image
 
 ```bash
-docker run -d -p 5000:5000 --rm=true --name=peekaboo <image id>
+docker run -d -p 5000:5000 --name=peekaboo peekaboo:latest
 ```
 
 ## Stop container:
