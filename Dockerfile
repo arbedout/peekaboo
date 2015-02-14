@@ -4,7 +4,7 @@ FROM centos:centos7
 RUN yum install -y epel-release
 
 # Install pre-requisites
-RUN yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc dmidecode sudo
+RUN yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc
 
 # Install Python modules
 RUN mkdir -p /home/peekaboo/plugins
