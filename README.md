@@ -22,9 +22,10 @@ cd peekaboo
 
 # Run using Docker
 
-For can quickly run it inside a Docker container:
+You can quickly run it inside a Docker container using:
 
-## Buid docker image
+
+## Build docker image
 
 ```bash
 docker build -t peekaboo:latest .
