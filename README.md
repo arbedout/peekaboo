@@ -19,6 +19,15 @@ cd peekaboo
 ./peekaboo.py
 ```
 
+# Run using Docker
+
+For can quickly run it inside a Docker container:
+
+```bash
+docker build .
+docker run -p 5000:5000 <image id>
+```
+
 # Query
 
 Query using YAML:
