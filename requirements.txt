@@ -1,0 +1,6 @@
+pyyaml
+netifaces
+netaddr
+mimerender
+flask
+flask-mimerender
