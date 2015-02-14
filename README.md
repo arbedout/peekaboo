@@ -12,6 +12,7 @@ sudo usermod <user> -G dmidecode
 sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
 %dmidecode ALL=(ALL) NOPASSWD:/usr/sbin/dmidecode
 EOF
+sudo yum install -y epel-release
 sudo yum install -y libselinux-utils redhat-lsb python-pip
 sudo pip install requirements.txt
 git clone https://github.com/mickep76/peekaboo.git
