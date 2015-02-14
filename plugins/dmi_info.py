@@ -2,13 +2,20 @@
 # -*- coding: utf-8 -*-
 
 from os.path import isfile
-from subprocess import CalledProcessError, check_output
+from subprocess import call, PIPE, CalledProcessError, check_output
+
+def _cmd_exists(cmd):
+    return call("type " + cmd, shell=True,
+        stdout=PIPE, stderr=PIPE) == 0
 
 def _get_dmi_info(name, fname):
     val = ''
     try:
-        val = check_output(['sudo', 'dmidecode', '-s', 'system-serial-number'])
-    except CalledProcessError as e:
+        if _cmd_exists('sudo') and _cmd_exists('dmidecode'):
+            val = check_output(['sudo', 'dmidecode', '-s', 'system-serial-number'])
+        else:
+            raise Exception('Missing binary')
+    except:
         if isfile(fname):
             f = open(fname, 'r')
             val = f.readline()
