@@ -14,6 +14,8 @@ html_top = '''
 <html>
     <head>
         <title>Peekaboo</title>
+        <meta name="author" content="Michael Persson" />
+        <meta name="copyright" content="Copyright (C) 2015 Michael Persson. All rights reserved." />
     </head>
     <body>
         <div id="container">
