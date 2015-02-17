@@ -56,14 +56,5 @@ def get_info():
 def get_status():
     return get_data('plugins/status/')
 
-@app.route('/services', methods=["GET"])
-@mimerender(
-    default = 'yaml',
-    yaml  = render_yaml,
-    json = render_json
-)
-def get_services():
-    return get_data('plugins/services/')
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050)
