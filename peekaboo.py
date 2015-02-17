@@ -10,6 +10,27 @@ from flaskmimerender import mimerender
 import yaml
 import json
 
+html_top = '''
+<html>
+    <head>
+        <title>Peekaboo</title>
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+            </div>
+            <div id="content">
+'''
+
+html_btm = '''
+            </div>
+            <div id="footer">
+            </div>
+        </div>
+    </body>
+</html>
+'''
+
 def dict_to_html(data, indent = ' ' * 4, pad = ''):
     html = '{0}<dl>\n'.format(pad)
     for key, val in data.items():
@@ -60,7 +81,7 @@ def get_data(path):
 
 app = Flask(__name__)
 
-render_html = lambda **args: '<html>\n{0}<body>\n{1}\n{2}</body>\n</html>\n'.format(' ' * 4, dict_to_html(args, ' ' * 4, ' ' * 8), ' ' * 4)
+render_html = lambda **args: html_top + dict_to_html(args, ' ' * 4, ' ' * 16) + html_btm
 render_json = lambda **args: json.dumps(args, indent = 4)
 render_yaml = lambda **args: yaml.safe_dump(args)
 
