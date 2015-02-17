@@ -10,12 +10,28 @@ from flaskmimerender import mimerender
 import yaml
 import json
 
-app = Flask(__name__)
 
-ender_xml = lambda message: '<message>%s</message>' % message
-render_json = jsonify
-render_html = lambda message: '<html><body>%s</body></html>' % message
-render_txt = lambda message: message
+def get_data(path):
+    sys.path.insert(0, path)
+
+    modules = {}
+    for fn in glob.glob(path + '*.py'):
+        fpath, fname = os.path.split(fn)
+        mname, ext = os.path.splitext(fname)
+        print >> sys.stderr, 'Load module: {0}'.format(mname)
+        modules[mname] = __import__(mname)
+
+    data = {}
+    for module in modules:
+        for name in dir(modules[module]):
+            if isinstance(modules[module].__dict__.get(name), types.FunctionType) and not name.startswith('_'):
+                print >> sys.stderr, 'Call function: {0}.{1}'.format(module, name)
+                try:
+                    data.update(modules[module].__dict__.get(name)())
+                except:
+                    print >> sys.stderr, 'Function call failed'
+                    pass
+    return data
 
 app = Flask(__name__)
 
@@ -28,28 +44,26 @@ render_yaml = lambda **args: yaml.safe_dump(args)
     yaml  = render_yaml,
     json = render_json
 )
-def get_facts():
-    sys.path.insert(0, 'plugins/')
+def get_info():
+    return get_data('plugins/info/')
 
-    modules = {}
-    for fn in glob.glob('plugins/*.py'):
-        fpath, fname = os.path.split(fn)
-        mname, ext = os.path.splitext(fname)
-#        print >> sys.stderr, 'Load module: {0}'.format(mname)
-        modules[mname] = __import__(mname)
-    
-    facts = {}
-    for module in modules:
-        for name in dir(modules[module]):
-            if isinstance(modules[module].__dict__.get(name), types.FunctionType) and not name.startswith('_'):
-#                print >> sys.stderr, 'Call function: {0}.{1}'.format(module, name)
-                try:
-                    facts.update(modules[module].__dict__.get(name)())
-                except:
-#                    print >> sys.stderr, 'Function call failed'
-                    pass
-    return facts
+@app.route('/status', methods=["GET"])
+@mimerender(
+    default = 'yaml',
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_status():
+    return get_data('plugins/status/')
+
+@app.route('/services', methods=["GET"])
+@mimerender(
+    default = 'yaml',
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_services():
+    return get_data('plugins/services/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050)
-#    app.run(host='0.0.0.0', port=5050, debug=True)
