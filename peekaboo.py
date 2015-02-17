@@ -10,6 +10,31 @@ from flaskmimerender import mimerender
 import yaml
 import json
 
+def dict_to_html(data, indent = ' ' * 4, pad = ''):
+    html = '{0}<dl>\n'.format(pad)
+    for key, val in data.items():
+        pad2 = pad + indent
+        if isinstance(val, list):
+            html += '{0}<dt>{1}</dt>\n{2}<dd>\n{3}\n{4}</dd>\n'.format(pad2, key, pad2, list_to_html(val, indent, pad2 + indent), pad2)
+        elif isinstance(val, dict):
+            html += '{0}<dt>{1}</dt>\n{2}<dd>\n{3}\n{4}</dd>\n'.format(pad2, key, pad2, dict_to_html(val, indent, pad2 + indent), pad2)
+        else:
+            html += '{0}<dt>{1}</dt>\n{2}<dd>{3}</dd>\n'.format(pad2, key, pad2, val)
+    html += '{0}</dl>'.format(pad)
+    return html
+
+def list_to_html(data, indent = ' ' * 4, pad = ''):
+    html = '{0}<ul>\n'.format(pad)
+    for val in data:
+        pad2 = pad + indent
+        if isinstance(val, list):
+            html += '{0}<li>\n{1}\n{2}</li>\n'.format(pad2, list_to_html(val, indent, pad2 + indent), pad2)
+        elif isinstance(val, dict):
+            html += '{0}<li>\n{1}\n{2}</li>\n'.format(pad2, dict_to_html(val, indent, pad2 + indent), pad2)
+        else:
+            html += '{0}<li>{1}</li>\n'.format(pad2, val)
+    html += '{0}</ul>'.format(pad)
+    return html
 
 def get_data(path):
     sys.path.insert(0, path)
@@ -35,12 +60,14 @@ def get_data(path):
 
 app = Flask(__name__)
 
+render_html = lambda **args: '<html>\n{0}<body>\n{1}\n{2}</body>\n</html>\n'.format(' ' * 4, dict_to_html(args, ' ' * 4, ' ' * 8), ' ' * 4)
 render_json = lambda **args: json.dumps(args, indent = 4)
 render_yaml = lambda **args: yaml.safe_dump(args)
 
 @app.route('/info', methods=["GET"])
 @mimerender(
-    default = 'yaml',
+    default = 'html',
+    html = render_html,
     yaml  = render_yaml,
     json = render_json
 )
@@ -49,7 +76,8 @@ def get_info():
 
 @app.route('/status', methods=["GET"])
 @mimerender(
-    default = 'yaml',
+    default = 'html',
+    html = render_html,
     yaml  = render_yaml,
     json = render_json
 )
