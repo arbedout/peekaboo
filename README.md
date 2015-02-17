@@ -1,6 +1,6 @@
 # Peekaboo
 
-Peekabo expose hardware info through HTTP.
+Expose hardware info through HTTP.
 
 # Install
 
@@ -14,8 +14,8 @@ sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
 EOF
 sudo yum install -y epel-release
 sudo yum install -y libselinux-utils redhat-lsb python-devel python-pip
-sudo pip install -r requirements.txt
 git clone https://github.com/mickep76/peekaboo.git
+sudo pip install -r peekaboo/requirements.txt
 cd peekaboo
 ./peekaboo.py
 ```
@@ -49,10 +49,12 @@ Query using YAML:
 
 ```bash
 curl -i http://<host>:5050/info
+curl -i http://<host>:5050/status
 ```
 
 Query using JSON:
 
 ```bash
 curl -i -H "Accept: application/json" http://<host>:5050/info
+curl -i -H "Accept: application/json" http://<host>:5050/status
 ```
