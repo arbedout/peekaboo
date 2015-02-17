@@ -4,3 +4,4 @@ netaddr
 mimerender
 flask
 flask-mimerender
+psutil

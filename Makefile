@@ -1,8 +1,8 @@
 NAME=peekaboo
-#RELEASE=$(shell git rev-parse --verify --short HEAD)
-RELEASE=$(shell date +'%Y%m%d%H%M%S')
-INT_PORT=5000
-EXT_PORT=5000
+RELEASE=$(shell git rev-parse --verify --short HEAD)
+#RELEASE=$(shell date +'%Y%m%d%H%M%S')
+INT_PORT=5050
+EXT_PORT=5050
 
 all:	build
 
