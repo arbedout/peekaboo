@@ -34,7 +34,7 @@ docker build -t peekaboo:latest .
 ## Run docker image
 
 ```bash
-docker run -d -p 5000:5000 --name=peekaboo peekaboo:latest
+docker run -d -p 5050:5050 --name=peekaboo peekaboo:latest
 ```
 
 ## Stop container:
@@ -48,11 +48,11 @@ docker stop peekaboo
 Query using YAML:
 
 ```bash
-curl -i http://<host>:5000/info
+curl -i http://<host>:5050/info
 ```
 
 Query using JSON:
 
 ```bash
-curl -i -H "Accept: application/json" http://<host>:5000/info
+curl -i -H "Accept: application/json" http://<host>:5050/info
 ```
