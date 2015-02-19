@@ -7,19 +7,19 @@ RUN yum install -y epel-release
 RUN yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc
 
 # Install Python modules
-RUN mkdir -p /home/peekaboo/plugins/{info,status}
-COPY requirements.txt /home/peekaboo/requirements.txt
-RUN pip install -r /home/peekaboo/requirements.txt
+RUN mkdir -p /var/lib/peekaboo/plugins/{info,status}
+COPY requirements.txt /var/lib/peekaboo/requirements.txt
+RUN pip install -r /var/lib/peekaboo/requirements.txt
 
 # Install application
-COPY peekaboo.py /home/peekaboo/peekaboo.py
-COPY plugins/info/* /home/peekaboo/plugins/info/
-COPY plugins/status/* /home/peekaboo/plugins/status/
-RUN chmod +x /home/peekaboo/peekaboo.py
+COPY peekaboo.py /usr/bin/peekaboo
+RUN chmod +x /usr/bin/peekaboo
+COPY peekaboo-docker.conf /etc/peekaboo.conf
+COPY plugins/info/* /var/lib/peekaboo/plugins/info/
+COPY plugins/status/* /var/lib/peekaboo/plugins/status/
 
 # Expose port 5000
-EXPOSE 5000
+EXPOSE 5050
 
 # Run application
-CMD cd /home/peekaboo ;\
-    ./peekaboo.py
+CMD /usr/bin/peekaboo

@@ -11,7 +11,7 @@ clean:
 	docker rm ${NAME} &>/dev/null || true
 
 build:
-	docker build -t ${NAME}:${RELEASE} .
+	docker build --no-cache --rm=true -t ${NAME}:${RELEASE} .
 	docker tag -f ${NAME}:${RELEASE} ${NAME}:latest
 
 run: clean build
