@@ -179,7 +179,10 @@ def get_status():
     return get_data(join(config.get('main', 'basedir'), 'plugins/status/'))
 
 if __name__ == '__main__':
-    if args.debug:
+    if args.dont_daemonize:
+        print yaml.safe_dump(get_data(join(config.get('main', 'basedir'), 'plugins/info/')))
+	print yaml.safe_dump(get_data(join(config.get('main', 'basedir'), 'plugins/status/')))
+    elif args.debug:
         app.run(host = config.get('http', 'host'), port = config.getint('http', 'port'), debug = True)
     else:
         app.run(host = config.get('http', 'host'), port = config.getint('http', 'port'))
