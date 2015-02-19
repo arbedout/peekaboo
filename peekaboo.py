@@ -72,7 +72,7 @@ def get_data(path):
     for fn in glob.glob(path + '*.py'):
         fpath, fname = os.path.split(fn)
         mname, ext = os.path.splitext(fname)
-	if args.debug:
+        if args.debug:
             logger.info('Load module: {0}'.format(mname))
         modules[mname] = __import__(mname)
 
@@ -80,7 +80,7 @@ def get_data(path):
     for module in modules:
         for name in dir(modules[module]):
             if isinstance(modules[module].__dict__.get(name), types.FunctionType) and not name.startswith('_'):
-		if args.debug:
+                if args.debug:
                     logger.info('Call function: {0}.{1}'.format(module, name))
                 try:
                     data.update(modules[module].__dict__.get(name)())
@@ -181,7 +181,7 @@ def get_status():
 if __name__ == '__main__':
     if args.dont_daemonize:
         print yaml.safe_dump(get_data(join(config.get('main', 'basedir'), 'plugins/info/')))
-	print yaml.safe_dump(get_data(join(config.get('main', 'basedir'), 'plugins/status/')))
+        print yaml.safe_dump(get_data(join(config.get('main', 'basedir'), 'plugins/status/')))
     elif args.debug:
         app.run(host = config.get('http', 'host'), port = config.getint('http', 'port'), debug = True)
     else:
