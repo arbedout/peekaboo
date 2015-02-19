@@ -18,7 +18,7 @@ COPY peekaboo-docker.conf /etc/peekaboo.conf
 COPY plugins/info/* /var/lib/peekaboo/plugins/info/
 COPY plugins/status/* /var/lib/peekaboo/plugins/status/
 
-# Expose port 5000
+# Expose port 5050
 EXPOSE 5050
 
 # Run application
