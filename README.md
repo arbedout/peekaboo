@@ -9,18 +9,9 @@ Here are the instructions for a manuall install on CentOS 7.
 ```bash
 sudo groupadd dmidecode
 sudo useradd -M -G dmidecode peekaboo
-sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
-%dmidecode ALL=(ALL) NOPASSWD:/usr/sbin/dmidecode
-EOF
-sudo yum install -y epel-release
-sudo yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc
-git clone https://github.com/mickep76/peekaboo.git
-sudo pip install -r peekaboo/requirements.txt
-sudo cp peekaboo/peekaboo.conf /etc/peekaboo.conf
-sudo cp peekaboo/peekaboo.py /usr/bin/peekaboo
-sudo chmod +x /usr/bin/peekaboo
-sudo mkdir /var/lib/peekaboo
-sudo cp -r peekaboo/plugins /var/lib/peekaboo
+echo "%dmidecode ALL=(ALL) NOPASSWD:/usr/sbin/dmidecode" >/etc/sudoers.d/dmidecode
+yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc git
+pip install peekaboo
 ```
 
 # Run using Docker
