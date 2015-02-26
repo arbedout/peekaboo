@@ -14,6 +14,9 @@ sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
 EOF
 sudo yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc git
 sudo pip install peekaboo
+sudo cp /usr/share/peekaboo/contrib/peekaboo.service /usr/lib/systemd/system/peekaboo.service
+sudo systemctl enable peekaboo
+sudo systemctl start peekaboo
 ```
 
 # Run using Docker
