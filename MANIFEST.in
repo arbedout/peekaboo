@@ -2,6 +2,6 @@ include etc/*
 include plugins/info/*
 include plugins/status/*
 include contrib/*
-include README.md
+include README.rst
 include LICENSE
 include requirements.txt

@@ -20,9 +20,10 @@ CLASSIFIERS = [
 
 setup(
     name             = 'peekaboo',
-    version          = '0.6-3',
+    version          = '0.6-4',
 
     description      = 'Expose hardware info through HTTP',
+    long_description = open("README.rst").read(),
 
     author           = 'Michael Persson',
     author_email     = 'michael.ake.persson@gmail.com',
