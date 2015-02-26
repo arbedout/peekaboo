@@ -20,7 +20,7 @@ CLASSIFIERS = [
 
 setup(
     name             = 'peekaboo',
-    version          = '0.6-5',
+    version          = '0.6-6',
 
     description      = 'Expose hardware info through HTTP',
     long_description = open("README.rst").read(),
@@ -36,7 +36,7 @@ setup(
     data_files	     = [('/etc', ['etc/peekaboo.conf']),
                         ('/var/lib/peekaboo/plugins/info', glob.glob('plugins/info/*.py')),
                         ('/var/lib/peekaboo/plugins/status', glob.glob('plugins/status/*.py')),
-			('/usr/share/peekaboo', ['LICENSE', 'README.md']),
+			('/usr/share/peekaboo', ['LICENSE', 'README.rst']),
 			('/usr/share/peekaboo/contrib', glob.glob('contrib/*'))],
     install_requires = requires,
 )
