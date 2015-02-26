@@ -9,6 +9,7 @@ all:	build
 clean:
 	docker stop ${NAME} &>/dev/null || true
 	docker rm ${NAME} &>/dev/null || true
+	rm -rf build/ dist/ *.egg-info/
 
 build:
 	docker build --no-cache --rm=true -t ${NAME}:${RELEASE} .
@@ -20,3 +21,6 @@ run: clean build
 stop:
 	docker stop ${NAME}
 	docker rm ${NAME}
+
+publish:
+	python setup.py sdist register upload
