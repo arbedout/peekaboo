@@ -12,7 +12,7 @@ Here are the instructions for a manual install on CentOS 7.
 
   sudo groupadd dmidecode
   sudo useradd -M -G dmidecode peekaboo
-  sudo tee -a /etc/sudoers.d/dmidecode << EOT >/dev/null
+  sudo tee -a /etc/sudoers.d/dmidecode << EOF >/dev/null
   %dmidecode ALL=(ALL) NOPASSWD:/usr/sbin/dmidecode
   EOF
   sudo yum install -y libselinux-utils redhat-lsb python-devel python-pip gcc git
