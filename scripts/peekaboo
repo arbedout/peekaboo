@@ -39,6 +39,20 @@ html_btm = '''
 </html>
 '''
 
+html_root = '''
+                <ul>
+                    <li><a href="info">info</a></li>
+                    <li><a href="status">status</a></li>
+                </ul>
+'''
+
+root = {
+    'links': [
+        { 'rel': 'info', 'href': 'info' },
+        { 'rel': 'status', 'href': 'status' }
+    ]
+}
+
 def dict_to_html(data, indent = ' ' * 4, pad = ''):
     html = '{0}<dl>\n'.format(pad)
     for key, val in data.items():
@@ -154,9 +168,20 @@ if os.getgid() != gid:
 
 app = Flask(__name__)
 
+render_root_html = lambda **args: html_top + html_root + html_btm
 render_html = lambda **args: html_top + dict_to_html(args, ' ' * 4, ' ' * 16) + html_btm
 render_json = lambda **args: json.dumps(args, indent = 4)
 render_yaml = lambda **args: yaml.safe_dump(args)
+
+@app.route('/', methods=["GET"])
+@mimerender(
+    default = 'html',
+    html = render_root_html,
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_root():
+    return root
 
 @app.route('/info', methods=["GET"])
 @mimerender(
