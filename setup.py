@@ -20,7 +20,7 @@ CLASSIFIERS = [
 
 setup(
     name             = 'peekaboo',
-    version          = '0.6-6',
+    version          = '0.7-1',
 
     description      = 'Expose hardware info through HTTP',
     long_description = open("README.rst").read(),
