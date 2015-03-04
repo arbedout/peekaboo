@@ -21,6 +21,12 @@ Here are the instructions for a manual install on CentOS 7.
   sudo systemctl enable peekaboo
   sudo systemctl start peekaboo
 
+You can also install it using:
+
+.. code-block:: bash
+
+  curl https://raw.githubusercontent.com/mickep76/peekaboo/master/setup_centos7.sh | sudo bash
+
 Run using Docker
 ================
 
