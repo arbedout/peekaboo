@@ -1,0 +1,216 @@
+#!/usr/bin/env python
+
+import requests
+import time
+import yaml
+from flask import Flask, request, jsonify
+from flaskmimerender import mimerender
+import yaml
+import json
+import argparse
+import logging
+import ConfigParser
+from flask import Flask, request, jsonify
+from flaskmimerender import mimerender
+from pwd import getpwnam
+from grp import getgrnam
+from os.path import isfile
+import sys
+import os
+
+html_top = '''
+<html>
+    <head>
+        <title>Peekaboo</title>
+        <meta name="author" content="Michael Persson" />
+        <meta name="copyright" content="Copyright (C) 2015 Michael Persson. All rights reserved." />
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+            </div>
+            <div id="content">
+'''
+
+html_btm = '''
+            </div>
+            <div id="footer">
+            </div>
+        </div>
+    </body>
+</html>
+'''
+
+html_root = '''
+                <ul>
+                    <li><a href="info">info</a></li>
+                    <li><a href="status">status</a></li>
+                </ul>
+'''
+
+root = {
+    'links': [
+        { 'rel': 'info', 'href': 'info' },
+        { 'rel': 'status', 'href': 'status' }
+    ]
+}
+
+def dict_to_html(data, indent = ' ' * 4, pad = ''):
+    html = '{0}<dl>\n'.format(pad)
+    for key, val in data.items():
+        pad2 = pad + indent
+        if isinstance(val, list):
+            html += '{0}<dt>{1}</dt>\n{2}<dd>\n{3}\n{4}</dd>\n'.format(pad2, key, pad2, list_to_html(val, indent, pad2 + indent), pad2)
+        elif isinstance(val, dict):
+            html += '{0}<dt>{1}</dt>\n{2}<dd>\n{3}\n{4}</dd>\n'.format(pad2, key, pad2, dict_to_html(val, indent, pad2 + indent), pad2)
+        else:
+            html += '{0}<dt>{1}</dt>\n{2}<dd>{3}</dd>\n'.format(pad2, key, pad2, val)
+    html += '{0}</dl>'.format(pad)
+    return html
+
+def list_to_html(data, indent = ' ' * 4, pad = ''):
+    html = '{0}<ul>\n'.format(pad)
+    for val in data:
+        pad2 = pad + indent
+        if isinstance(val, list):
+            html += '{0}<li>\n{1}\n{2}</li>\n'.format(pad2, list_to_html(val, indent, pad2 + indent), pad2)
+        elif isinstance(val, dict):
+            html += '{0}<li>\n{1}\n{2}</li>\n'.format(pad2, dict_to_html(val, indent, pad2 + indent), pad2)
+        else:
+            html += '{0}<li>{1}</li>\n'.format(pad2, val)
+    html += '{0}</ul>'.format(pad)
+    return html
+
+def get_data(host, port, url):
+    headers = {'content-type': 'application/json', 'accept': 'application/json'}
+    try:
+        r = requests.get('http://{0}:{1}/{2}'.format(host, port, url), headers=headers, timeout=5)
+    except requests.exceptions.RequestException as e:
+        print e
+	return { 'timestamp': time.time(), 'connect_ok': False }
+
+    data = {}
+    data['timestamp'] = time.time()
+    data['connect_ok'] = True
+    data['status_code'] = r.status_code
+
+    if r.status_code != 200:
+	return data
+
+    data.update(r.json())
+    return data
+
+# Define arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--config', default='/etc/iseeyou.conf', help='Configuration file')
+parser.add_argument('-d', '--debug', action='store_true', help='Print debug info')
+parser.add_argument('-H', '--host-list', required=True, help='Host list')
+parser.add_argument('-D', '--dont-daemonize', action='store_true', help='Don''t daemonize, print result to Console')
+args = parser.parse_args()
+
+# Create formatter
+formatter = logging.Formatter("[%(levelname)-8s] %(message)s")
+
+# Create console handle
+console = logging.StreamHandler()
+console.setFormatter(formatter)
+
+loglvl = logging.WARN
+if args.debug:
+    loglvl = logging.DEBUG
+
+# Create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(loglvl)
+logger.addHandler(console)
+
+# Set default configuration
+config = ConfigParser.ConfigParser()
+config.add_section('main')
+config.set('main', 'user', 'iseeyou')
+config.set('main', 'group', 'iseeyou')
+config.set('main', 'pooling_intervall', '60')
+config.add_section('client')
+config.set('client', 'port', '5050')
+config.add_section('http')
+config.set('http', 'host', '0.0.0.0')
+config.set('http', 'port', '5051')
+
+# Get configuration
+if not isfile(args.config):
+    logger.critical("Configuration file doesn't exist: {0}".format(args.config))
+    sys.exit(1)
+config.read([args.config])
+
+# Get host list
+if not isfile(args.host_list):
+    logger.critical("Host list file doesn't exist: {0}".format(args.host_list))
+    sys.exit(1)
+
+#fp = open(args.host_list, 'r')
+#hosts = fp.readlines()
+#hosts = fp.read().split('\n')
+
+with open(args.host_list, 'r') as fp:
+    hosts = fp.read().splitlines()
+
+# Get user and group id
+uid = getpwnam(config.get('main', 'user')).pw_uid
+gid = getgrnam(config.get('main', 'group')).gr_gid
+
+# If root then switch user and group
+if os.getuid() == 0:
+    os.setuid(uid)
+if os.getgid() == 0:
+    os.setgid(gid)
+
+# Check that we're running as the correct user and group
+if os.getuid() != uid:
+    logger.critical('Application need to run as user: %s(%s)' % (config.get('main', 'user'), uid))
+    sys.exit(1)
+if os.getgid() != gid:
+    logger.critical('Application need to run as group: %s(%s)' % (config.get('main', 'group'), gid))
+    sys.exit(1)
+
+info = {}
+status = {}
+for host in hosts:
+    logger.info('Connecting to: http://{0}:{1}/info'.format(host, config.get('client', 'port')))
+    info[host] = get_data(host, config.get('client', 'port'), 'info')
+    logger.info('Connecting to: http://{0}:{1}/status'.format(host, config.get('client', 'port')))
+    status[host] = get_data(host, config.get('client', 'port'), 'status')
+
+app = Flask(__name__)
+
+render_html = lambda **args: html_top + dict_to_html(args, ' ' * 4, ' ' * 16) + html_btm
+render_json = lambda **args: json.dumps(args, indent = 4)
+render_yaml = lambda **args: yaml.safe_dump(args)
+
+@app.route('/info', methods=["GET"])
+@mimerender(
+    default = 'html',
+    html = render_html,
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_info():
+    return info
+
+@app.route('/status', methods=["GET"])
+@mimerender(
+    default = 'html',
+    html = render_html,
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_status():
+    return status
+
+if __name__ == '__main__':
+    if args.dont_daemonize:
+        print yaml.safe_dump(info)
+        print yaml.safe_dump(status)
+    elif args.debug:
+        app.run(host = config.get('http', 'host'), port = config.getint('http', 'port'), debug = True)
+    else:
+        app.run(host = config.get('http', 'host'), port = config.getint('http', 'port'))

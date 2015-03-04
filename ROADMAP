@@ -1,0 +1,6 @@
+- How to do host discovery?
+  + Host register with iseeyou?
+  + Gossip protocoll?
+  + Multicast UDP discovery?
+- Host list just a temporary measue until I decide on discovery mechanism
+- Merge iseeyou and peekaboo into a library to normalize the code
