@@ -4,7 +4,7 @@ set -e
 set -u
 
 if ! grep 'CentOS Linux release 7' /etc/redhat-release &>/dev/null; then
-    echo 'This setup script, only works on  CentOS 7'
+    echo 'This setup script, only works on CentOS 7'
     exit 1
 fi
 
