@@ -147,10 +147,6 @@ if not isfile(args.host_list):
     logger.critical("Host list file doesn't exist: {0}".format(args.host_list))
     sys.exit(1)
 
-#fp = open(args.host_list, 'r')
-#hosts = fp.readlines()
-#hosts = fp.read().split('\n')
-
 with open(args.host_list, 'r') as fp:
     hosts = fp.read().splitlines()
 
@@ -182,9 +178,20 @@ for host in hosts:
 
 app = Flask(__name__)
 
+render_root_html = lambda **args: html_top + html_root + html_btm
 render_html = lambda **args: html_top + dict_to_html(args, ' ' * 4, ' ' * 16) + html_btm
 render_json = lambda **args: json.dumps(args, indent = 4)
 render_yaml = lambda **args: yaml.safe_dump(args)
+
+@app.route('/', methods=["GET"])
+@mimerender(
+    default = 'html',
+    html = render_root_html,
+    yaml  = render_yaml,
+    json = render_json
+)
+def get_root():
+    return root
 
 @app.route('/info', methods=["GET"])
 @mimerender(
